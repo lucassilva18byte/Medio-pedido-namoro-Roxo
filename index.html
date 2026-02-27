@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedido Especial 💜</title>
+
+<style>
+:root{
+  --cor1:#3b0a57;
+  --cor2:#6a0dad;
+  --cor3:#b266ff;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Georgia', serif;
+}
+
+body{
+  height:100vh;
+  overflow:hidden;
+  background:linear-gradient(135deg,var(--cor1),var(--cor2),var(--cor3));
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+}
+
+/* ESTRELAS SUAVES */
+.estrelas span{
+  position:absolute;
+  width:3px;
+  height:3px;
+  background:white;
+  border-radius:50%;
+  opacity:0.4;
+  animation:subir linear infinite;
+}
+
+@keyframes subir{
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-10vh);}
+}
+
+/* CORAÇÕES */
+.coracao{
+  position:absolute;
+  color:#e0b3ff;
+  animation:flutuar linear infinite;
+  opacity:0.7;
+  text-shadow:0 0 15px #c77dff;
+}
+
+@keyframes flutuar{
+  from{transform:translateY(100vh) scale(1);}
+  to{transform:translateY(-10vh) scale(1.6);}
+}
+
+/* CARTA */
+.card{
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(18px);
+  padding:55px;
+  width:90%;
+  max-width:650px;
+  border-radius:30px;
+  border:2px solid rgba(255,255,255,0.4);
+  box-shadow:
+    0 0 40px rgba(186,85,211,0.6),
+    0 25px 70px rgba(0,0,0,0.6);
+  text-align:center;
+  animation:entrar 1.5s ease;
+  position:relative;
+}
+
+@keyframes entrar{
+  from{opacity:0; transform:translateY(70px) scale(0.85);}
+  to{opacity:1; transform:translateY(0) scale(1);}
+}
+
+h1{
+  margin-bottom:25px;
+  font-size:26px;
+  text-shadow:0 0 15px rgba(255,255,255,0.7);
+}
+
+.texto{
+  font-size:18px;
+  min-height:120px;
+  margin-bottom:25px;
+  line-height:1.6;
+}
+
+button{
+  padding:12px 28px;
+  border:none;
+  border-radius:30px;
+  cursor:pointer;
+  font-weight:bold;
+  margin:10px;
+  transition:0.3s;
+}
+
+.sim{
+  background:white;
+  color:#6a0dad;
+}
+
+.sim:hover{
+  transform:scale(1.1);
+}
+
+.nao{
+  background:#ffffff30;
+  color:white;
+  position:relative;
+}
+
+.final{
+  font-size:22px;
+  margin-top:20px;
+  animation:fadeIn 1.5s ease forwards;
+  opacity:0;
+}
+
+@keyframes fadeIn{
+  to{opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="estrelas"></div>
+<div id="coracoes"></div>
+
+<div class="card">
+  <h1>Tem algo que eu preciso te dizer 💜</h1>
+  <div class="texto" id="texto"></div>
+  <div id="botoes">
+    <button id="continuar" onclick="proximaFrase()" class="sim">Continuar ✨</button>
+  </div>
+  <div id="finalMsg"></div>
+</div>
+
+<script>
+
+/* ESTRELAS */
+const estrelas = document.querySelector(".estrelas");
+for(let i=0;i<60;i++){
+  let span=document.createElement("span");
+  span.style.left=Math.random()*100+"vw";
+  span.style.animationDuration=(8+Math.random()*6)+"s";
+  estrelas.appendChild(span);
+}
+
+/* CORAÇÕES */
+const areaCoracoes=document.getElementById("coracoes");
+function gerarCoracao(){
+  let heart=document.createElement("div");
+  heart.classList.add("coracao");
+  heart.innerHTML="❤";
+  heart.style.left=Math.random()*100+"vw";
+  heart.style.fontSize=(18+Math.random()*25)+"px";
+  heart.style.animationDuration=(7+Math.random()*5)+"s";
+  areaCoracoes.appendChild(heart);
+  setTimeout(()=>heart.remove(),9000);
+}
+setInterval(gerarCoracao,800);
+
+/* FRASES */
+const frases=[
+"Desde que você entrou na minha vida...",
+"Tudo passou a fazer mais sentido.",
+"Cada momento ao seu lado é único.",
+"E meu coração já sabe a resposta..."
+];
+
+let index = 0;
+let escrevendo = false;
+const texto = document.getElementById("texto");
+const continuarBtn = document.getElementById("continuar");
+const botoes = document.getElementById("botoes");
+const finalMsg = document.getElementById("finalMsg");
+
+function digitarFrase(frase){
+    escrevendo = true;
+    texto.innerHTML = "";
+    let char = 0;
+
+    function escrever(){
+        if(char < frase.length){
+            texto.innerHTML += frase.charAt(char);
+            char++;
+            setTimeout(escrever, 35);
+        } else {
+            escrevendo = false;
+        }
+    }
+    escrever();
+}
+
+function proximaFrase(){
+    if(escrevendo) return;
+
+    if(index < frases.length){
+        digitarFrase(frases[index]);
+        index++;
+    } else {
+        mostrarPedido();
+    }
+}
+
+function mostrarPedido(){
+    texto.innerHTML = "Você aceita namorar comigo? 💍💜";
+    continuarBtn.style.display="none";
+
+    botoes.innerHTML = `
+        <button class="sim" onclick="aceitou()">SIM 💜</button>
+        <button class="nao" onmouseover="fugir(this)">NÃO 😅</button>
+    `;
+}
+
+function fugir(btn){
+    btn.style.position="absolute";
+    btn.style.top=Math.random()*200+"px";
+    btn.style.left=Math.random()*200+"px";
+}
+
+function aceitou(){
+    botoes.style.display="none";
+    finalMsg.innerHTML="<div class='final'>Agora é oficial 💜✨<br>Você é minha namorada!</div>";
+    
+    for(let i=0;i<35;i++){
+        setTimeout(gerarCoracao, i*100);
+    }
+}
+
+</script>
+
+</body>
+</html>
